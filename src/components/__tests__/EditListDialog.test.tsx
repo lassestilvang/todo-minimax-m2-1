@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'bun:test';
-import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { EditListDialog } from '../lists/EditListDialog';
 import type { List } from '@/lib/types';
 
@@ -7,6 +7,24 @@ import type { List } from '@/lib/types';
 import '@/lib/__tests__/jsdom-setup';
 import { resetMocks } from '@/lib/__tests__/next-mocks';
 import { NextTestProvider } from '@/lib/__tests__/next-test-provider';
+
+// Mock framer-motion
+vi.mock('framer-motion', () => ({
+  motion: {
+    div: 'div',
+  },
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
+// Mock the update-list-action
+vi.mock('@/app/actions/update-list-action', () => ({
+  updateListAction: vi.fn(),
+}));
+
+// Mock the delete-list-action
+vi.mock('@/app/actions/delete-list-action', () => ({
+  deleteListAction: vi.fn(),
+}));
 
 describe('EditListDialog', () => {
   const mockList: List = {
