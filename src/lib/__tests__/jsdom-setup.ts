@@ -15,11 +15,58 @@ global.navigator = dom.window.navigator;
 global.HTMLElement = dom.window.HTMLElement;
 global.HTMLDivElement = dom.window.HTMLDivElement;
 global.HTMLButtonElement = dom.window.HTMLButtonElement;
+global.HTMLInputElement = dom.window.HTMLInputElement;
+global.HTMLTextAreaElement = dom.window.HTMLTextAreaElement;
 global.Element = dom.window.Element;
 global.Node = dom.window.Node;
 global.DocumentFragment = dom.window.DocumentFragment;
 global.requestAnimationFrame = (cb) => setTimeout(cb, 16);
 global.cancelAnimationFrame = (id) => clearTimeout(id);
+
+// Add MutationObserver polyfill (required by React Testing Library)
+class MutationObserver {
+  private callback: (mutations: MutationRecord[]) => void;
+  private observer: any;
+
+  constructor(callback: (mutations: MutationRecord[]) => void) {
+    this.callback = callback;
+    this.observer = null;
+  }
+
+  observe(target: Node, options: MutationObserverInit) {
+    // Simple mock - just store the target and options
+    this.observer = { target, options };
+  }
+
+  disconnect() {
+    this.observer = null;
+  }
+
+  takeRecords() {
+    return [];
+  }
+}
+
+global.MutationObserver = MutationObserver as unknown as typeof globalThis.MutationObserver;
+global.MutationRecord = class MutationRecord {
+  type = 'childList';
+  target: Node;
+  addedNodes: NodeListOf<Node> = new NodeList();
+  removedNodes: NodeListOf<Node> = new NodeList();
+  previousSibling: Node | null = null;
+  nextSibling: Node | null = null;
+  attributeName: string | null = null;
+  oldValue: string | null = null;
+
+  constructor(init?: Partial<MutationRecord>) {
+    if (init) {
+      Object.assign(this, init);
+    }
+    if (!this.target) {
+      this.target = document.createElement('div');
+    }
+  }
+} as unknown as typeof globalThis.MutationRecord;
 
 // Add getComputedStyle
 (global as unknown as { getComputedStyle: typeof window.getComputedStyle }).getComputedStyle = (
