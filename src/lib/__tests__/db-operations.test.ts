@@ -84,7 +84,7 @@ describe('Database Operations', () => {
       db.prepare('DELETE FROM lists WHERE id = ?').run(testList.id);
       
       const result = db.prepare('SELECT * FROM lists WHERE id = ?').get(testList.id);
-      expect(result).toBeUndefined();
+      expect(result).toBeFalsy(); // bun:sqlite returns null for not found rows
     });
 
     it('getDefaultList returns Inbox', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
-import { createTestDb, closeTestDb, cleanupTestDb, generateTestList, generateTestTask, generateTestLabel, generateTestSubtask } from '../lib/__tests__/setup';
+import { createTestDb, closeTestDb, cleanupTestDb, generateTestList, generateTestTask, generateTestLabel, generateTestSubtask } from './setup';
 import { v4 as uuidv4 } from 'uuid';
 
 describe('Integration Tests', () => {

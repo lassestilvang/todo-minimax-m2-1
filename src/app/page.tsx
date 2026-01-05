@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { format } from "date-fns"
 import { RefreshCw, Plus } from "lucide-react"
 import { MainLayout } from "@/components/layout/MainLayout"
@@ -35,7 +35,7 @@ export default function Home() {
   const [overdueCount, setOverdueCount] = useState(0)
 
   // Fetch tasks based on current view
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     setIsLoading(true)
     try {
       const params = new URLSearchParams()
@@ -62,12 +62,12 @@ export default function Home() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [currentView, selectedListId])
 
   // Load tasks on mount and when view changes
   useEffect(() => {
     loadTasks()
-  }, [currentView, selectedListId])
+  }, [loadTasks])
 
   // Load overdue count
   useEffect(() => {

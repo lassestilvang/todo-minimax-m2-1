@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { searchTasksWithRelations, getLists, getLabels } from "@/lib/db/operations"
+import type { TaskWithRelations, List, Label } from "@/lib/types"
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
@@ -18,9 +19,9 @@ export async function GET(request: NextRequest) {
 
   try {
     const results: {
-      tasks: any[]
-      lists: any[]
-      labels: any[]
+      tasks: (TaskWithRelations & { list: Pick<List, 'id' | 'name' | 'color' | 'emoji'> | null })[]
+      lists: List[]
+      labels: Label[]
     } = {
       tasks: [],
       lists: [],

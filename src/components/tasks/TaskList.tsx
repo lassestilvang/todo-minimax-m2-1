@@ -300,7 +300,7 @@ export function TaskList({
           <CheckCircle2 className="h-10 w-10 text-muted-foreground/50 mb-3" />
           <h3 className="font-medium">All tasks completed!</h3>
           <p className="text-sm text-muted-foreground">
-            Great job! Toggle "Completed" to see finished tasks.
+            Great job! Toggle &quot;Completed&quot; to see finished tasks.
           </p>
         </Card>
       )}

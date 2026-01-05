@@ -223,7 +223,7 @@ export function UpcomingView({ onTaskEdit, onTaskView, onAddTask }: UpcomingView
           <CheckCircle2 className="h-12 w-12 text-green-500 mb-4" />
           <h3 className="text-lg font-semibold">All caught up!</h3>
           <p className="text-muted-foreground mb-4">
-            You've completed all your upcoming tasks.
+            You&apos;ve completed all your upcoming tasks.
           </p>
           <Button onClick={onAddTask}>
             <Plus className="mr-2 h-4 w-4" />
@@ -331,7 +331,7 @@ function TaskCard({
                 key={label.id}
                 variant="secondary"
                 className="text-xs"
-                style={{ backgroundColor: label.color + "20", color: label.color }}
+                style={{ backgroundColor: (label.color || undefined) ? `${label.color}20` : undefined, color: label.color || undefined }}
               >
                 {label.name}
               </Badge>
@@ -364,7 +364,7 @@ function EmptyUpcomingState({ onAddTask }: { onAddTask?: () => void }) {
       </div>
       <h3 className="text-xl font-semibold mb-2">No upcoming tasks</h3>
       <p className="text-muted-foreground mb-6 max-w-sm">
-        You're all caught up! Future tasks will appear here.
+        You&apos;re all caught up! Future tasks will appear here.
       </p>
       <Button onClick={onAddTask}>
         <Plus className="mr-2 h-4 w-4" />

@@ -258,7 +258,7 @@ export function WeekView({ onTaskEdit, onTaskView, onAddTask }: WeekViewProps) {
           <CheckCircle2 className="h-12 w-12 text-green-500 mb-4" />
           <h3 className="text-lg font-semibold">All caught up!</h3>
           <p className="text-muted-foreground mb-4">
-            You've completed all your tasks for this week.
+            You&apos;ve completed all your tasks for this week.
           </p>
           <Button onClick={onAddTask}>
             <Plus className="mr-2 h-4 w-4" />
@@ -369,7 +369,7 @@ function TaskCard({
                 key={label.id}
                 variant="secondary"
                 className="text-xs"
-                style={{ backgroundColor: label.color + "20", color: label.color }}
+                style={{ backgroundColor: (label.color || undefined) ? `${label.color}20` : undefined, color: label.color || undefined }}
               >
                 {label.name}
               </Badge>

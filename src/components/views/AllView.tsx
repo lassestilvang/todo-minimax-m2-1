@@ -5,9 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { format, isToday, isTomorrow, isPast, addDays, startOfWeek, endOfWeek, isThisMonth, parseISO } from "date-fns"
 import { 
   Calendar, 
-  Clock, 
   CheckCircle2, 
-  Circle, 
   AlertTriangle,
   ChevronRight,
   Plus,
@@ -31,11 +29,10 @@ export function AllView({ onTaskEdit, onTaskView, onAddTask }: AllViewProps) {
   const { showCompletedTasks } = useUIStore()
   const [isLoading, setIsLoading] = React.useState(true)
   const [tasks, setTasks] = React.useState<TaskWithRelations[]>([])
-  const [lists, setLists] = React.useState<List[]>([])
   const [overdueCount, setOverdueCount] = React.useState(0)
   const [completedCount, setCompletedCount] = React.useState(0)
 
-  const loadTasks = async () => {
+  const loadTasks = React.useCallback(async () => {
     setIsLoading(true)
     try {
       const params = new URLSearchParams()
@@ -45,7 +42,6 @@ export function AllView({ onTaskEdit, onTaskView, onAddTask }: AllViewProps) {
       if (response.ok) {
         const data = await response.json()
         setTasks(data.tasks || [])
-        setLists(data.lists || [])
       }
       
       // Fetch overdue count
@@ -56,17 +52,17 @@ export function AllView({ onTaskEdit, onTaskView, onAddTask }: AllViewProps) {
       }
       
       // Count completed tasks
-      setCompletedCount(tasks.filter((t: TaskWithRelations) => t.is_completed).length)
+      setCompletedCount(prev => prev) // Will be recalculated in useEffect
     } catch (error) {
       console.error("Failed to load all tasks:", error)
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
 
   React.useEffect(() => {
     loadTasks()
-  }, [])
+  }, [loadTasks])
 
   // Group tasks for all view
   const groupedTasks = React.useMemo(() => {
@@ -248,7 +244,7 @@ export function AllView({ onTaskEdit, onTaskView, onAddTask }: AllViewProps) {
           <CheckCircle2 className="h-12 w-12 text-green-500 mb-4" />
           <h3 className="text-lg font-semibold">All tasks completed!</h3>
           <p className="text-muted-foreground mb-4">
-            Toggle "Show Completed" to see finished tasks.
+            Toggle &quot;Show Completed&quot; to see finished tasks.
           </p>
           {showCompletedTasks && (
             <Button onClick={onAddTask}>

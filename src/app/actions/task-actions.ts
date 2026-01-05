@@ -33,6 +33,7 @@ import type {
   UpdateSubtaskInput,
   CreateReminderInput,
   CreateLabelInput,
+  RecurringPattern,
 } from "@/lib/validators/task-validators"
 import type { TaskAction } from "@/lib/types"
 
@@ -454,7 +455,7 @@ export async function completeRecurringTaskAction(taskId: string): Promise<{ suc
   }
 }
 
-function calculateNextOccurrence(currentDate: Date, pattern: any): string {
+function calculateNextOccurrence(currentDate: Date, pattern: RecurringPattern): string {
   const nextDate = new Date(currentDate)
   
   switch (pattern.type) {

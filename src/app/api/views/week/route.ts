@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getWeekTasks, getOverdueTasks, getLabelsForTask, getSubtasksByTaskId, getRemindersForTask } from "@/lib/db/operations"
-import type { TaskWithRelations } from "@/lib/types"
+import type { Task, TaskWithRelations } from "@/lib/types"
 
 export async function GET(request: Request) {
   try {
@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     const overdueTasks = getOverdueTasks()
 
     // Combine and transform tasks with relations
-    const transformTask = (task: any): TaskWithRelations => ({
+    const transformTask = (task: Task): TaskWithRelations => ({
       ...task,
       labels: getLabelsForTask(task.id),
       subtasks: getSubtasksByTaskId(task.id),

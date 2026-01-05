@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import Database from 'better-sqlite3';
+import { Database } from 'bun:sqlite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -7,7 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const testDbPath = path.join(__dirname, '..', '..', '..', 'data', 'test.db');
 
 // Test database utilities
-export function createTestDb(): Database.Database {
+export function createTestDb(): Database {
   // Remove existing test database
   try {
     require('fs').unlinkSync(testDbPath);
@@ -108,10 +108,10 @@ export function createTestDb(): Database.Database {
   `);
 
   // Seed default Inbox
-  const inboxCheck = db.prepare('SELECT COUNT(*) as count FROM lists WHERE is_default = 1').get() as { count: number };
+  const inboxCheck = db.query('SELECT COUNT(*) as count FROM lists WHERE is_default = 1').get() as { count: number };
   if (inboxCheck.count === 0) {
     const now = new Date().toISOString();
-    db.prepare(`
+    db.query(`
       INSERT INTO lists (id, name, color, emoji, is_default, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `).run(uuidv4(), 'Inbox', '#3b82f6', '📥', 1, now, now);
@@ -120,19 +120,19 @@ export function createTestDb(): Database.Database {
   return db;
 }
 
-export function closeTestDb(db: Database.Database) {
+export function closeTestDb(db: Database) {
   db.close();
 }
 
-export function cleanupTestDb(db: Database.Database) {
+export function cleanupTestDb(db: Database) {
   // Clean up test data
-  db.prepare('DELETE FROM task_labels').run();
-  db.prepare('DELETE FROM task_reminders').run();
-  db.prepare('DELETE FROM task_logs').run();
-  db.prepare('DELETE FROM subtasks').run();
-  db.prepare('DELETE FROM tasks').run();
-  db.prepare('DELETE FROM labels').run();
-  db.prepare('DELETE FROM lists WHERE is_default = 0').run();
+  db.query('DELETE FROM task_labels').run();
+  db.query('DELETE FROM task_reminders').run();
+  db.query('DELETE FROM task_logs').run();
+  db.query('DELETE FROM subtasks').run();
+  db.query('DELETE FROM tasks').run();
+  db.query('DELETE FROM labels').run();
+  db.query('DELETE FROM lists WHERE is_default = 0').run();
 }
 
 export function generateTestList() {

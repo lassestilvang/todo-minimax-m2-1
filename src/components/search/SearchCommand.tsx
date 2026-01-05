@@ -309,7 +309,7 @@ export function SearchCommand({
           <CommandEmpty>
             <div className="py-6 text-center">
               <Search className="mx-auto h-8 w-8 mb-2 opacity-50" />
-              <p className="text-sm">No results found for "{query}"</p>
+              <p className="text-sm">No results found for &quot;{query}&quot;</p>
               <p className="text-xs text-muted-foreground mt-1">
                 Try a different search term
               </p>
@@ -530,7 +530,6 @@ export function SearchCommand({
       <SheetContent
         side="bottom"
         className="h-[80vh] rounded-t-2xl"
-        showCloseButton={false}
       >
         <SheetHeader className="pb-4 border-b">
           <SheetTitle className="flex items-center gap-2">

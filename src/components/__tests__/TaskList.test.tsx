@@ -1,8 +1,20 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'bun:test';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { TaskList } from '../tasks/TaskList';
-import { UIProvider } from '@/store/ui-store';
 import type { TaskWithRelations } from '@/lib/types';
+
+// Mock localStorage for zustand persistence
+const localStorageMock = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+};
+
+Object.defineProperty(global, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+});
 
 describe('TaskList', () => {
   const mockTasks: TaskWithRelations[] = [
@@ -78,9 +90,7 @@ describe('TaskList', () => {
 
   it('groups tasks by date', () => {
     render(
-      <UIProvider>
-        <TaskList tasks={mockTasks} />
-      </UIProvider>
+      <TaskList tasks={mockTasks} />
     );
     
     expect(screen.getByText('Task 1')).toBeInTheDocument();
@@ -89,9 +99,7 @@ describe('TaskList', () => {
 
   it('shows empty state when no tasks', () => {
     render(
-      <UIProvider>
-        <TaskList tasks={[]} />
-      </UIProvider>
+      <TaskList tasks={[]} />
     );
     
     expect(screen.getByText(/no tasks/i)).toBeInTheDocument();
@@ -99,9 +107,7 @@ describe('TaskList', () => {
 
   it('hides completed tasks when toggle is off', () => {
     render(
-      <UIProvider>
-        <TaskList tasks={mockTasks} />
-      </UIProvider>
+      <TaskList tasks={mockTasks} />
     );
     
     // Completed task should not be visible initially
@@ -110,9 +116,7 @@ describe('TaskList', () => {
 
   it('shows completed tasks when toggle is on', () => {
     render(
-      <UIProvider>
-        <TaskList tasks={mockTasks} showCompletedTasks={true} />
-      </UIProvider>
+      <TaskList tasks={mockTasks} showCompletedTasks={true} />
     );
     
     // Click the "Completed" toggle button
@@ -125,9 +129,7 @@ describe('TaskList', () => {
 
   it('shows loading state', () => {
     render(
-      <UIProvider>
-        <TaskList tasks={[]} isLoading={true} />
-      </UIProvider>
+      <TaskList tasks={[]} isLoading={true} />
     );
     
     // Should show skeleton loading
@@ -136,9 +138,7 @@ describe('TaskList', () => {
 
   it('shows task count in toolbar', () => {
     render(
-      <UIProvider>
-        <TaskList tasks={[mockTasks[0]]} />
-      </UIProvider>
+      <TaskList tasks={[mockTasks[0]]} />
     );
     
     expect(screen.getByText(/1 task/i)).toBeInTheDocument();
@@ -146,9 +146,7 @@ describe('TaskList', () => {
 
   it('sorts tasks by priority', () => {
     render(
-      <UIProvider>
-        <TaskList tasks={mockTasks} />
-      </UIProvider>
+      <TaskList tasks={mockTasks} />
     );
     
     // Click sort dropdown

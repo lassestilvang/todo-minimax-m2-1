@@ -35,6 +35,7 @@ import {
 import { createTaskAction, updateTaskAction } from "@/app/actions/task-actions"
 import type { TaskWithRelations, List, Label as LabelType } from "@/lib/types"
 import type { CreateTaskInput, UpdateTaskInput } from "@/lib/validators/task-validators"
+import { createTaskSchema, updateTaskSchema } from "@/lib/validators/task-validators"
 
 interface TaskFormProps {
   task?: TaskWithRelations | null
@@ -91,11 +92,7 @@ export function TaskForm({
   const isEditing = !!task
 
   const form = useForm<FormData>({
-    resolver: zodResolver(
-      task
-        ? require("@/lib/validators/task-validators").updateTaskSchema
-        : require("@/lib/validators/task-validators").createTaskSchema
-    ),
+    resolver: zodResolver(task ? updateTaskSchema : createTaskSchema),
     defaultValues: {
       name: task?.name || "",
       description: task?.description || "",

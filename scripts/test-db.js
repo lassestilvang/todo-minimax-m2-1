@@ -4,9 +4,14 @@
  * Database Verification Test Script
  */
 
-const Database = require('better-sqlite3');
-const path = require('path');
-const { v4: uuidv4 } = require('uuid');
+import Database from 'better-sqlite3'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import { v4 as uuidv4 } from 'uuid'
+import fs from 'fs'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const dbPath = path.join(__dirname, '..', 'data', 'todo.db');
 const db = new Database(dbPath);
@@ -166,7 +171,7 @@ function main() {
 
   // Test 1: Database file exists
   test('Database file is created in data/ directory', () => {
-    return require('fs').existsSync(dbPath);
+    return fs.existsSync(dbPath);
   });
 
   // Test 2: Tables exist

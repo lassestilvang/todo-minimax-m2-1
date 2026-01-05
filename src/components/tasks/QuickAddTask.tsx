@@ -244,7 +244,7 @@ export function QuickAddTask({
 
       {/* Quick Tips */}
       <p className="text-xs text-muted-foreground mt-2">
-        💡 Tip: Type "today", "tomorrow", or "next week" for smart dates
+        💡 Tip: Type &quot;today&quot;, &quot;tomorrow&quot;, or &quot;next week&quot; for smart dates
       </p>
     </motion.div>
   )
@@ -273,12 +273,12 @@ export function QuickAddTaskButton({
             if (e.key === "Enter") {
               const input = e.currentTarget
               if (input.value.trim()) {
-                createTaskAction(new FormData([
-                  ["list_id", defaultListId || lists[0]?.id || ""],
-                  ["name", input.value.trim()],
-                  ["priority", "none"],
-                  ["label_ids", "[]"],
-                ])).then(() => {
+                const formData = new FormData()
+                formData.append("list_id", defaultListId || lists[0]?.id || "")
+                formData.append("name", input.value.trim())
+                formData.append("priority", "none")
+                formData.append("label_ids", "[]")
+                createTaskAction(formData).then(() => {
                   setIsAdding(false)
                   onTaskCreated?.()
                 })
