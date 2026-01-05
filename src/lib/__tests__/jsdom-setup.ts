@@ -47,3 +47,30 @@ Object.defineProperty(global, 'localStorage', {
   value: localStorageMock,
   writable: true,
 });
+
+// Set up Next.js navigation and themes mocks BEFORE any component imports
+// This must be done before components that use these hooks are imported
+const mockRouter = {
+  push: vi.fn(),
+  replace: vi.fn(),
+  prefetch: vi.fn(),
+  back: vi.fn(),
+  forward: vi.fn(),
+  refresh: vi.fn(),
+};
+
+const mockPathname = '/';
+const mockSearchParams = new URLSearchParams();
+const mockParams = {};
+
+vi.stubGlobal('useRouter', () => mockRouter);
+vi.stubGlobal('usePathname', () => mockPathname);
+vi.stubGlobal('useSearchParams', () => mockSearchParams);
+vi.stubGlobal('useParams', () => mockParams);
+
+vi.stubGlobal('useTheme', () => ({
+  theme: 'light',
+  setTheme: vi.fn(),
+  resolvedTheme: 'light',
+  forcedTheme: undefined,
+}));

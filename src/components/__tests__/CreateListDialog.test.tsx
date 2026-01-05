@@ -2,12 +2,18 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'bun:test';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { CreateListDialog } from '../lists/CreateListDialog';
 
+// Import mocks and setup
+import '@/lib/__tests__/jsdom-setup';
+import { mockRouter, resetMocks } from '@/lib/__tests__/next-mocks';
+import { NextTestProvider } from '@/lib/__tests__/next-test-provider';
+
 describe('CreateListDialog', () => {
   const mockOnSuccess = vi.fn();
   const mockOnOpenChange = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
+    resetMocks();
   });
 
   afterEach(() => {
@@ -15,8 +21,14 @@ describe('CreateListDialog', () => {
     cleanup();
   });
 
+  const renderWithProviders = (ui: React.ReactElement) => {
+    return render(
+      <NextTestProvider>{ui}</NextTestProvider>
+    );
+  };
+
   it('validates required name', () => {
-    render(
+    renderWithProviders(
       <CreateListDialog
         open={true}
         onOpenChange={mockOnOpenChange}
@@ -33,7 +45,7 @@ describe('CreateListDialog', () => {
   });
 
   it('accepts valid list name', () => {
-    render(
+    renderWithProviders(
       <CreateListDialog
         open={true}
         onOpenChange={mockOnOpenChange}
@@ -54,7 +66,7 @@ describe('CreateListDialog', () => {
   });
 
   it('color picker works', () => {
-    render(
+    renderWithProviders(
       <CreateListDialog
         open={true}
         onOpenChange={mockOnOpenChange}
@@ -68,7 +80,7 @@ describe('CreateListDialog', () => {
   });
 
   it('emoji picker works', () => {
-    render(
+    renderWithProviders(
       <CreateListDialog
         open={true}
         onOpenChange={mockOnOpenChange}
@@ -82,7 +94,7 @@ describe('CreateListDialog', () => {
   });
 
   it('closes on cancel', () => {
-    render(
+    renderWithProviders(
       <CreateListDialog
         open={true}
         onOpenChange={mockOnOpenChange}
@@ -98,7 +110,7 @@ describe('CreateListDialog', () => {
   });
 
   it('shows dialog title', () => {
-    render(
+    renderWithProviders(
       <CreateListDialog
         open={true}
         onOpenChange={mockOnOpenChange}
