@@ -18,6 +18,9 @@ export function createTestDb(): Database {
   }
 
   const db = new Database(testDbPath);
+  
+  // Enable foreign keys
+  db.exec('PRAGMA foreign_keys = ON');
 
   // Initialize schema
   db.exec(`

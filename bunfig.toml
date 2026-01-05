@@ -1,5 +1,21 @@
 [test]
 preload = "./src/lib/__tests__/jsdom-setup.ts"
+timeout = 10000
 
 [test.env]
 JSDOM = "true"
+
+# Test file patterns
+testFiles = [
+  "src/**/*.{test,spec}.{ts,tsx}",
+]
+
+# Watch mode settings
+[test.watch]
+exclude = [
+  "coverage/**",
+  "node_modules/**",
+  ".git/**",
+  "*.config.*",
+  "**/*.md",
+]
