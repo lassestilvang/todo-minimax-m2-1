@@ -1,33 +1,33 @@
 // Mocks for Next.js modules - must be imported before components
-import type { Mock } from 'bun:test';
+// These mocks are set up using vi.mock() which is available in bun:test
 
-// Mock router object
+// Create mock router with vi.fn()
 export const mockRouter = {
-  push: (() => {}) as Mock<(href: string) => void>,
-  replace: (() => {}) as Mock<(href: string) => void>,
-  prefetch: (() => {}) as Mock<(href: string) => void>,
-  back: (() => {}) as Mock<() => void>,
-  forward: (() => {}) as Mock<() => void>,
-  refresh: (() => {}) as Mock<() => void>,
+  push: vi.fn<(href: string) => void>(),
+  replace: vi.fn<(href: string) => void>(),
+  prefetch: vi.fn<(href: string) => void>(),
+  back: vi.fn<() => void>(),
+  forward: vi.fn<() => void>(),
+  refresh: vi.fn<() => void>(),
 };
 
-export const mockUsePathname = (() => '/') as Mock<() => string>;
-export const mockUseSearchParams = (() => new URLSearchParams()) as Mock<() => URLSearchParams>;
-export const mockUseParams = (() => ({})) as Mock<() => Record<string, string>>;
+export const mockUsePathname = vi.fn<() => string>(() => '/');
+export const mockUseSearchParams = vi.fn<() => URLSearchParams>(() => new URLSearchParams());
+export const mockUseParams = vi.fn<() => Record<string, string>>(() => ({}));
 
-export const mockUseTheme = (() => ({
-  theme: 'light',
-  setTheme: (() => {}) as Mock<(theme: string) => void>,
-  resolvedTheme: 'light',
-  forcedTheme: undefined,
-})) as Mock<() => {
+export const mockUseTheme = vi.fn<() => {
   theme: string;
-  setTheme: Mock<(theme: string) => void>;
+  setTheme: (theme: string) => void;
   resolvedTheme: string;
   forcedTheme?: string;
-}>;
+}>(() => ({
+  theme: 'light',
+  setTheme: vi.fn<(theme: string) => void>(),
+  resolvedTheme: 'light',
+  forcedTheme: undefined,
+}));
 
-// Reset mocks helper
+// Reset mocks helper - bun:test uses vi.fn().mockClear()
 export function resetMocks() {
   Object.values(mockRouter).forEach((fn) => {
     if (typeof fn === 'function') {

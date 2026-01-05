@@ -48,29 +48,74 @@ Object.defineProperty(global, 'localStorage', {
   writable: true,
 });
 
-// Set up Next.js navigation and themes mocks BEFORE any component imports
-// This must be done before components that use these hooks are imported
-const mockRouter = {
-  push: vi.fn(),
-  replace: vi.fn(),
-  prefetch: vi.fn(),
-  back: vi.fn(),
-  forward: vi.fn(),
-  refresh: vi.fn(),
-};
+// Mock window.matchMedia (needed by next-themes and some UI libraries)
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
 
-const mockPathname = '/';
-const mockSearchParams = new URLSearchParams();
-const mockParams = {};
-
-vi.stubGlobal('useRouter', () => mockRouter);
-vi.stubGlobal('usePathname', () => mockPathname);
-vi.stubGlobal('useSearchParams', () => mockSearchParams);
-vi.stubGlobal('useParams', () => mockParams);
-
-vi.stubGlobal('useTheme', () => ({
-  theme: 'light',
-  setTheme: vi.fn(),
-  resolvedTheme: 'light',
-  forcedTheme: undefined,
+// Mock fetch for API calls in test environment
+// This returns mock data for common API endpoints
+vi.mock('node:fetch', () => ({
+  default: vi.fn((url: string) => {
+    // Return mock response for tasks API
+    if (url.includes('/api/tasks')) {
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({
+          tasks: [],
+          lists: [],
+        }),
+      });
+    }
+    
+    // Return mock response for overdue count
+    if (url.includes('/overdue-count')) {
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ count: 0 }),
+      });
+    }
+    
+    return Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({}),
+    });
+  }),
 }));
+
+// Also mock global.fetch
+global.fetch = vi.fn((url: string) => {
+  // Return mock response for tasks API
+  if (url.includes('/api/tasks')) {
+    return Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({
+        tasks: [],
+        lists: [],
+      }),
+    });
+  }
+  
+  // Return mock response for overdue count
+  if (url.includes('/overdue-count')) {
+    return Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({ count: 0 }),
+    });
+  }
+  
+  return Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({}),
+  });
+});
