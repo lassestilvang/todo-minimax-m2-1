@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'bun:test';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { TaskList } from '../tasks/TaskList';
 import type { TaskWithRelations } from '@/lib/types';
 
@@ -86,6 +86,7 @@ describe('TaskList', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    cleanup();
   });
 
   it('groups tasks by date', () => {

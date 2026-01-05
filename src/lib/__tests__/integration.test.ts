@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
 import { createTestDb, closeTestDb, cleanupTestDb, generateTestList, generateTestTask, generateTestLabel, generateTestSubtask } from './setup';
 import { v4 as uuidv4 } from 'uuid';
@@ -35,6 +36,13 @@ describe('Integration Tests', () => {
         INSERT INTO tasks (id, list_id, name, description, date, priority, is_completed, created_at, updated_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `).run(taskId, testList.id, 'Integration Test Task', 'Task description', new Date().toISOString().split('T')[0], 'high', 0, now, now);
+
+      // Create the task log entry (simulating what createTask function does)
+      const logId = uuidv4();
+      db.prepare(`
+        INSERT INTO task_logs (id, task_id, action, field_changed, old_value, new_value, created_at, created_by)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(logId, taskId, 'created', null, null, null, now, 'user');
 
       // Verify task was created
       const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId) as any;

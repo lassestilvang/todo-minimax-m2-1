@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
 import { createTestDb, closeTestDb, cleanupTestDb, generateTestList, generateTestTask, generateTestLabel, generateTestSubtask } from './setup';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 describe('Database Operations', () => {
   let db: ReturnType<typeof createTestDb>;
 

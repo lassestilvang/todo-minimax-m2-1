@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'bun:test';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
 import { TaskForm } from '../tasks/TaskForm';
 import type { TaskWithRelations, List, Label } from '@/lib/types';
 
@@ -20,6 +20,7 @@ describe('TaskForm', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    cleanup();
   });
 
   it('validates required name field', async () => {

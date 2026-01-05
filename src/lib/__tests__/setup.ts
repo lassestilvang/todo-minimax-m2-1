@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { v4 as uuidv4 } from 'uuid';
 import { Database } from 'bun:sqlite';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const testDbPath = path.join(__dirname, '..', '..', '..', 'data', 'test.db');
@@ -10,7 +12,7 @@ const testDbPath = path.join(__dirname, '..', '..', '..', 'data', 'test.db');
 export function createTestDb(): Database {
   // Remove existing test database
   try {
-    require('fs').unlinkSync(testDbPath);
+    fs.unlinkSync(testDbPath);
   } catch {
     // Ignore if file doesn't exist
   }

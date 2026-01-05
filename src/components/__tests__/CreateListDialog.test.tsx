@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'bun:test';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { CreateListDialog } from '../lists/CreateListDialog';
 
 describe('CreateListDialog', () => {
@@ -12,6 +12,7 @@ describe('CreateListDialog', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    cleanup();
   });
 
   it('validates required name', () => {

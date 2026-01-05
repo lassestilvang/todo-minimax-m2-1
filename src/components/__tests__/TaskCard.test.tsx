@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'bun:test';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { TaskCard } from '../tasks/TaskCard';
 import type { TaskWithRelations } from '@/lib/types';
 
@@ -47,6 +47,7 @@ describe('TaskCard', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    cleanup();
   });
 
   it('renders task name correctly', () => {

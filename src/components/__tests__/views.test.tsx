@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'bun:test';
-import { render, screen } from '@testing-library/react';
+import { render, screen, cleanup } from '@testing-library/react';
 import { TodayView } from '../views/TodayView';
 import { WeekView } from '../views/WeekView';
 import { UpcomingView } from '../views/UpcomingView';
@@ -137,6 +137,7 @@ describe('View Components', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    cleanup();
   });
 
   describe('TodayView', () => {
