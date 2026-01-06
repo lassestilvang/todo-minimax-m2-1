@@ -92,6 +92,17 @@ export function TaskForm({
     label_ids: string[]
   }
 
+  // Helper to safely format deadline for form initialization
+  const formatDeadlineForForm = (deadline: string | null | undefined): string => {
+    if (!deadline || typeof deadline !== "string") return ""
+    // Check if it's a valid ISO date format with proper structure
+    const parts = deadline.split("T")
+    if (parts.length !== 2 || !parts[0] || !parts[1]) return ""
+    // Validate the date parts are meaningful
+    if (parts[0].length < 10 || parts[1].length < 4) return ""
+    return deadline
+  }
+
   // Use type assertion for resolver to avoid complex type mismatch
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const form = useForm<FormDataType>({
@@ -101,7 +112,7 @@ export function TaskForm({
       name: task?.name || "",
       description: task?.description || "",
       date: task?.date || "",
-      deadline: task?.deadline?.split("T")[0] + "T" + (task?.deadline?.split("T")[1]?.slice(0, 5) || "") || "",
+      deadline: formatDeadlineForForm(task?.deadline),
       priority: (task?.priority || "none") as "high" | "medium" | "low" | "none",
       estimate_minutes: task?.estimate_minutes || null,
       list_id: task?.list_id || defaultListId || lists[0]?.id || "",
@@ -207,6 +218,22 @@ export function TaskForm({
     return hours * 60 + minutes
   }
 
+  // Safe date formatter that handles invalid dates
+  const safeFormatDate = (dateStr: string | null | undefined, formatStr: string): string => {
+    if (!dateStr) return ""
+    try {
+      const date = new Date(dateStr)
+      if (isNaN(date.getTime())) {
+        console.warn("[TaskForm] Invalid date string:", dateStr)
+        return ""
+      }
+      return format(date, formatStr)
+    } catch {
+      console.warn("[TaskForm] Failed to parse date:", dateStr)
+      return ""
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -282,7 +309,7 @@ export function TaskForm({
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {form.watch("date") ? format(new Date(form.watch("date")), "PPP") : "Select date"}
+                    {safeFormatDate(form.watch("date"), "PPP") || "Select date"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
@@ -308,9 +335,7 @@ export function TaskForm({
                     )}
                   >
                     <Clock className="mr-2 h-4 w-4" />
-                    {form.watch("deadline")
-                      ? format(new Date(form.watch("deadline")), "PPP p")
-                      : "Set deadline"}
+                    {safeFormatDate(form.watch("deadline"), "PPP p") || "Set deadline"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
