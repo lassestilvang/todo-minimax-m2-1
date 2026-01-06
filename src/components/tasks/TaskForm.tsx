@@ -63,19 +63,6 @@ const RECURRING_OPTIONS = [
   { value: "custom", label: "Custom..." },
 ]
 
-type FormData = {
-  name: string
-  description: string
-  date: string
-  deadline: string
-  priority: "high" | "medium" | "low" | "none"
-  estimate_minutes: number | null
-  list_id: string
-  recurring_pattern: string | null
-  label_ids: string[]
-  subtasks: { id: string; name: string; is_completed: boolean }[]
-}
-
 export function TaskForm({
   task,
   lists,
@@ -91,19 +78,35 @@ export function TaskForm({
 
   const isEditing = !!task
 
-  const form = useForm<FormData>({
-    resolver: zodResolver(task ? updateTaskSchema : createTaskSchema),
+  // Define form data type
+  interface FormDataType {
+    id?: string
+    name: string
+    description: string
+    date: string
+    deadline: string
+    priority: "high" | "medium" | "low" | "none"
+    estimate_minutes: number | null
+    list_id: string
+    recurring_pattern: string | null
+    label_ids: string[]
+  }
+
+  // Use type assertion for resolver to avoid complex type mismatch
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const form = useForm<FormDataType>({
+    resolver: zodResolver(isEditing ? updateTaskSchema : createTaskSchema) as any,
     defaultValues: {
+      id: task?.id,
       name: task?.name || "",
       description: task?.description || "",
       date: task?.date || "",
       deadline: task?.deadline?.split("T")[0] + "T" + (task?.deadline?.split("T")[1]?.slice(0, 5) || "") || "",
-      priority: task?.priority || "none",
+      priority: (task?.priority || "none") as "high" | "medium" | "low" | "none",
       estimate_minutes: task?.estimate_minutes || null,
       list_id: task?.list_id || defaultListId || lists[0]?.id || "",
       recurring_pattern: task?.recurring_pattern || null,
       label_ids: task?.labels?.map(l => l.id) || [],
-      subtasks: [],
     },
   })
 
@@ -120,7 +123,7 @@ export function TaskForm({
     }
   }, [task])
 
-  const handleSubmit = async (data: FormData) => {
+  const handleSubmit = async (data: FormDataType) => {
     setIsSubmitting(true)
     try {
       const formData = new FormData()
@@ -129,15 +132,15 @@ export function TaskForm({
         formData.append("id", task.id)
       }
       
-      formData.append("list_id", data.list_id)
-      formData.append("name", data.name)
+      formData.append("list_id", data.list_id || "")
+      formData.append("name", data.name || "")
       formData.append("description", data.description || "")
       formData.append("date", data.date || "")
       formData.append("deadline", data.deadline || "")
-      formData.append("priority", data.priority)
+      formData.append("priority", data.priority || "none")
       formData.append("estimate_minutes", String(data.estimate_minutes || ""))
       formData.append("recurring_pattern", data.recurring_pattern || "")
-      formData.append("label_ids", JSON.stringify(data.label_ids))
+      formData.append("label_ids", JSON.stringify(data.label_ids || []))
 
       let result
       if (isEditing) {
@@ -161,19 +164,22 @@ export function TaskForm({
   const addSubtask = () => {
     const newSubtasks = [...subtasks, { id: crypto.randomUUID(), name: "", is_completed: false }]
     setSubtasks(newSubtasks)
-    form.setValue("subtasks", newSubtasks)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    form.setValue("subtasks" as any, newSubtasks)
   }
 
   const updateSubtask = (id: string, name: string) => {
     const newSubtasks = subtasks.map(st => st.id === id ? { ...st, name } : st)
     setSubtasks(newSubtasks)
-    form.setValue("subtasks", newSubtasks)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    form.setValue("subtasks" as any, newSubtasks)
   }
 
   const removeSubtask = (id: string) => {
     const newSubtasks = subtasks.filter(st => st.id !== id)
     setSubtasks(newSubtasks)
-    form.setValue("subtasks", newSubtasks)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    form.setValue("subtasks" as any, newSubtasks)
   }
 
   const toggleLabel = (labelId: string) => {

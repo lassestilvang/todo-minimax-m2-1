@@ -41,15 +41,17 @@ export async function GET(request: NextRequest) {
 
       // Get list info for each task
       const { getListById } = await import("@/lib/db/operations")
-      tasks = tasks.slice(0, limit).map((task) => {
+      // Remove score property and add list property
+      const tasksWithList: (TaskWithRelations & { list: Pick<List, 'id' | 'name' | 'color' | 'emoji'> | null })[] = tasks.slice(0, limit).map((task) => {
+        const { score, ...taskWithoutScore } = task as TaskWithRelations & { score: number }
         const list = getListById(task.list_id)
         return {
-          ...task,
+          ...taskWithoutScore,
           list: list ? { id: list.id, name: list.name, color: list.color, emoji: list.emoji } : null,
         }
       })
 
-      results.tasks = tasks
+      results.tasks = tasksWithList
     }
 
     // Search lists

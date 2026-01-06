@@ -9,24 +9,15 @@ const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
 });
 
 // Set up global objects
-global.document = dom.window.document;
-global.window = dom.window as unknown as Window & typeof globalThis;
-global.navigator = dom.window.navigator;
-global.HTMLElement = dom.window.HTMLElement;
-global.HTMLDivElement = dom.window.HTMLDivElement;
-global.HTMLButtonElement = dom.window.HTMLButtonElement;
-global.HTMLInputElement = dom.window.HTMLInputElement;
-global.HTMLTextAreaElement = dom.window.HTMLTextAreaElement;
-global.Element = dom.window.Element;
-global.Node = dom.window.Node;
-global.DocumentFragment = dom.window.DocumentFragment;
-global.requestAnimationFrame = (cb) => setTimeout(cb, 16);
-global.cancelAnimationFrame = (id) => clearTimeout(id);
+(global as { document: Document }).document = dom.window.document;
+(global as { window: Window & typeof globalThis }).window = dom.window as unknown as Window & typeof globalThis;
+(global as { navigator: Navigator }).navigator = dom.window.navigator;
+(global as { HTMLElement: typeof HTMLElement }).HTMLElem
 
 // Add MutationObserver polyfill (required by React Testing Library)
 class MutationObserver {
   private callback: (mutations: MutationRecord[]) => void;
-  private observer: any;
+  private observer: { target: Node; options: MutationObserverInit } | null = null;
 
   constructor(callback: (mutations: MutationRecord[]) => void) {
     this.callback = callback;
